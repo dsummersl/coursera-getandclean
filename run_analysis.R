@@ -51,4 +51,4 @@ meanByActivityAndSubject <- data %>%
   summarise_each(funs(mean)) %>%
   ungroup()
 
-write.table(meanByActivityAndSubject, "mean_by_activity_and_subject.csv", row.name=FALSE)
+write.table(meanByActivityAndSubject, "mean_by_activity_and_subject.txt", row.name=FALSE)
