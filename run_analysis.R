@@ -7,10 +7,6 @@ if (!dir.exists("uci_har_dataset")) {
     unzip("dataset.zip",exdir="uci_har_dataset",junkpaths=T)
 }
 
-featureNames <- read.delim("uci_har_dataset/features.txt", sep=" ", col.names=c("column","measurement"),header=FALSE)
-featureNames$measurement <- as.character(featureNames$measurement)
-meansAndSTDs <- grep("mean\\(|std\\(",featureNames$measurement)
-
 trainData <- fread("uci_har_dataset/X_train.txt",sep=" ", strip.white=TRUE)
 trainData <- as.data.frame(trainData)
 trainSubjects <- fread("uci_har_dataset/subject_train.txt",sep=" ", strip.white=TRUE)
@@ -31,6 +27,10 @@ activityFactors <- as.data.frame(activityFactors)
 data <- rbind(trainData, testData)
 subjects <- rbind(trainSubjects, testSubjects)
 activities <- rbind(trainActivities, testActivities)
+
+featureNames <- read.delim("uci_har_dataset/features.txt", sep=" ", col.names=c("column","measurement"),header=FALSE)
+featureNames$measurement <- as.character(featureNames$measurement)
+meansAndSTDs <- grep("mean\\(|std\\(",featureNames$measurement)
 data <- data[,meansAndSTDs]
 
 # Clean up the original measurement names.
@@ -47,8 +47,6 @@ data$subject <- subjects[,1]
 data$activity <- factor(activities[,1],levels=activityFactors$V1,labels=activityFactors$V2)
 
 meanByActivityAndSubject <- data %>%
-data$subject <- subjects[,1]
-data$activity <- factor(activities[,1],levels=activityFactors$V1,labels=activityFactors$V2)
   group_by(activity, subject) %>%
   summarise_each(funs(mean)) %>%
   ungroup()
